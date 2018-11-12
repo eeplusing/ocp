@@ -7,7 +7,7 @@ SELECT prod_seq.nextval FROM dual;
 INSERT INTO products VALUES(prod_seq.nextval, '12c sql', 'ACTIVE', 60, SYSDATE, 20);
 INSERT INTO products VALUES(prod_seq.nextval, '12c sql all', 'ACTIVE', 100, SYSDATE, 40);
 
-SELECT * FROM customers;
+SELECT * FROM customers; 
 
 INSERT INTO customers(customer_id,join_date, customer_status, customer_name, creditrating)
 VALUES(cust_seq.nextval, SYSDATE, 'ACTIVE', 'ÕÅÈý'£¬ 'A');
