@@ -54,6 +54,47 @@ TRUNCATE TABLE tablename;
 --删除数据及表结构
 DROP TABLE tablename;
 
+--事务隔离性举例
+--会话1
+CREATE TABLE t1 AS SELECT * FROM all_users;
+SELECT COUNT(*) FROM t1;
+--会话2
+SELECT COUNT(*) FROM t1;
+
+--会话1
+DELETE FROM t1;
+SELECT COUNT(*) FROM t1;
+--会话2
+SELECT COUNT(*) FROM t1;
+
+--会话1
+ROLLBACK;
+SELECT COUNT(*) FROM t1;
+--会话2
+SELECT COUNT(*) FROM t1;
+
+--会话1
+DELETE FROM t1;
+SELECT COUNT(*) FROM t1;
+--会话2
+SELECT COUNT(*) FROM t1;
+
+--会话1
+CREATE VIEW v1 AS SELECT * FROM t1;--ddl语句会执行事务的commit
+SELECT COUNT(*) FROM t1;
+--会话2
+SELECT COUNT(*) FROM t1;
+
+--会话1
+ROLLBACK;
+SELECT COUNT(*) FROM t1;
+--会话2
+SELECT COUNT(*) FROM t1;
+
+DROP TABLE t1;
+DROP VIEW v1;
+
+
 
 
 
