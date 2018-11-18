@@ -22,6 +22,23 @@ SELECT begin_time, end_time, (
 
 
 
+--创建撤销表空间
+CREATE UNDO TABLESPACE undo2 DATAFILE '/home/oracle/oracleDBFile/undo2'
+SIZE 100m;
+--查询数据库中的表空间
+SELECT tablespace_name, CONTENTS, RETENTION FROM dba_tablespaces;
+
+--查询数据库中的撤销段
+SELECT tablespace_name, segment_name, status FROM dba_rollback_segs;
+
+--调整实例使用新的撤销表空间
+ALTER SYSTEM SET undo_tablespace=undo2 SCOPE=MEMORY;
+
+--调整撤销表空间原初始值
+ALTER SYSTEM SET undo_tablespace=undotbs1;
+
+--删除撤销表空间
+DROP TABLESPACE undo2 INCLUDING CONTENTS AND DATAFILES;
 
 
 
