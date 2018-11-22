@@ -27,7 +27,7 @@ SELECT * FROM TABLE WHERE tid > primarykeyvalue FOR UPDATE SKIP LOCKED;
 SELECT waiter.username "Blocked session", waiter.SID, blocker.username "Blocking session", 
 blocker.sid, blocker.SERIAL# FROM v$session waiter JOIN v$session blocker ON(waiter.BLOCKING_SESSION=blocker.sid);
 
---查询日志信息
+--查询日志trace信息
 SELECT * FROM v$diag_info WHERE NAME='Diag Trace';
 
 --less alert_orcl1.log
