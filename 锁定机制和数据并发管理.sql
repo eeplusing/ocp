@@ -23,4 +23,32 @@ SELECT * FROM tablename WHERE tid=primarykeyvalue FOR UPDATE;
 --排队，获取未被其他会话锁定的行
 SELECT * FROM TABLE WHERE tid > primarykeyvalue FOR UPDATE SKIP LOCKED;
 
-       
+--检测锁定争用 需要使用拥有v$session视图权限的用户
+SELECT waiter.username "Blocked session", waiter.SID, blocker.username "Blocking session", 
+blocker.sid, blocker.SERIAL# FROM v$session waiter JOIN v$session blocker ON(waiter.BLOCKING_SESSION=blocker.sid);
+
+--查询日志信息
+SELECT * FROM v$diag_info WHERE NAME='Diag Trace';
+
+--less alert_orcl1.log
+--2018-11-22T23:24:40.424369+08:00
+--ORA-00060: Deadlock detected. See Note 60.1 at My Oracle Support for Troubleshooting ORA-60 Errors. More info in file /u01/app/oracle/diag/rdbms/orcl1/orcl1/trace/orcl1_s000_3771.trc.
+--less /u01/app/oracle/diag/rdbms/orcl1/orcl1/trace/orcl1_s000_3771.trc
+/*
+2018-11-22 23:24:39.197*:ksq.c@12954:ksqdld_hdr_dump(): 
+DEADLOCK DETECTED ( ORA-00060 )
+See Note 60.1 at My Oracle Support for Troubleshooting ORA-60 Errors
+
+[Transaction Deadlock]
+ 
+The following deadlock is not an ORACLE error. It is a
+deadlock due to user error in the design of an application
+or from issuing incorrect ad-hoc SQL. The following
+information may aid in determining the deadlock:
+ 
+Deadlock graph:
+                                          ------------Blocker(s)-----------  ------------Waiter(s)------------
+Resource Name                             process session holds waits serial  process session holds waits serial
+TX-0006001E-000003E9-00000000-00000000         33     142     X        31924      26     147           X   4162
+TX-00020015-000003E5-00000000-00000000         26     147     X         4162      33     142           X  31924
+*/
