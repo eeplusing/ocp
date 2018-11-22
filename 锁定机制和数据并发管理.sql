@@ -15,7 +15,7 @@
 
 --排队机制
 --不排队
-SELECT * FROM tablename FOR UPDATE NO WAIT;
+SELECT * FROM tablename FOR UPDATE NO WAIT; 
 --排队一定时间(200单位秒)
 SELECT * FROM tablename FOR UPDATE WAIT<200>;
 --排队，指导获取到锁
