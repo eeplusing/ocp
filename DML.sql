@@ -54,12 +54,21 @@ TRUNCATE TABLE tablename;
 --删除数据及表结构
 DROP TABLE tablename;
 
---MERGE复杂DML
+--参照表创建表仅参考表结构无数据
+CREATE TABLE empl AS SELECT * FROM employees WHERE 1=2;
+--将查询结果插入表中
+INSERT INTO empl (employee_id,last_name,email,hire_date,job_id,salary)
+(SELECT employee_id,last_name,email,hire_date,job_id,salary FROM employees);
+SELECT * FROM empl;
+DROP TABLE empl;
+
+--MERGE复杂DML演示
+--参照现有表创建表并copy数据
 CREATE TABLE new_empl AS SELECT * FROM employees;
 CREATE TABLE new_empl2 AS SELECT * FROM employees;
 
 SELECT COUNT(*) FROM new_empl;
-SELECT COUNT(*) FROM new_empl2;
+SELECT COUNT(*) FROM new_empl2; 
 
 UPDATE new_empl2 n SET n.salary=10 WHERE n.employee_id=100; 
 
