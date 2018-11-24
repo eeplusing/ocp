@@ -54,6 +54,31 @@ TRUNCATE TABLE tablename;
 --删除数据及表结构
 DROP TABLE tablename;
 
+--MERGE复杂DML
+CREATE TABLE new_empl AS SELECT * FROM employees;
+CREATE TABLE new_empl2 AS SELECT * FROM employees;
+
+SELECT COUNT(*) FROM new_empl;
+SELECT COUNT(*) FROM new_empl2;
+
+UPDATE new_empl2 n SET n.salary=10 WHERE n.employee_id=100; 
+
+DELETE FROM new_empl WHERE employee_id > 200;
+
+MERGE INTO new_empl e USING new_empl2 n 
+ON(e.employee_id=n.employee_id)
+WHEN MATCHED THEN
+  UPDATE SET e.salary=n.salary
+WHEN NOT MATCHED THEN
+  INSERT(employee_id,last_name,salary,email,hire_date,job_id)
+  VALUES(n.employee_id,n.last_name,n.salary,n.email,n.hire_date,n.job_id); 
+
+SELECT * FROM new_empl;
+SELECT * FROM new_empl2;
+DROP TABLE new_empl;
+DROP TABLE new_empl2;
+
+
 --事务隔离性举例
 --会话1
 CREATE TABLE t1 AS SELECT * FROM all_users;
