@@ -20,7 +20,18 @@ SELECT (5*9+3)/7 FROM dual;
 SELECT 'I''m lucy' "describe" FROM dual;
 --使用引用运算符
 SELECT q'<plural's>' FROM dual;
- 
+
+--限制行的子句
+SELECT last_name, salary FROM employees ORDER BY salary OFFSET 100 ROWS FETCH FIRST 7 ROWS ONLY;
+  
+SELECT last_name, salary FROM employees ORDER BY salary OFFSET 100 ROWS FETCH FIRST 5 ROWS ONLY;
+--with ties 只有指定了order by子句才有效
+SELECT last_name, salary FROM employees ORDER BY salary OFFSET 100 ROWS FETCH FIRST 5 ROWS WITH ties;
+
+--&和&&替换 在sqlplus中执行
+SELECT FIRST_NAME, '&&EMPLOYEE_ID', SALARY, SALARY * 12 AS "ANNUAL SALARY", '&&TAX_RATE', 
+('&TAX_RATE'*(SALARY*12)) AS "TAX" FROM employees WHERE employee_id='&EMPLOYEE_ID';
+
 
 
 
