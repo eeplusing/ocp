@@ -130,10 +130,78 @@ SELECT to_number('$1,000.55','$999,999.99') FROM dual;
 --嵌套函数
 SELECT next_day(last_day(SYSDATE)-7,'星期三') FROM dual;
 
+--条件函数
+--NVL(original,ifnull)
+--123
+SELECT NVL(123,789) FROM dual;
+--1234
+SELECT NVL(NULL,1234) FROM dual;
+--No substring exists
+SELECT NVL(SUBSTR('abc', 4),'No substring exists') FROM dual;
 
+--NVL2(original,ifnotnull,ifnull)
+--5678
+SELECT NVL2(NULL,1234,5678) FROM dual;
+SELECT NVL2(SUBSTR('abc',2),'not bc','no substring') FROM dual;
 
+--NULLIF(ifunequal,comparison_term),如果相等返回空，否则返回ifunequal
+--返回空
+SELECT NULLIF(1234,1234) FROM dual;
+--abc
+SELECT NULLIF('abc','a') FROM dual;
 
+SELECT first_name,last_name,email,NVL2(
+  NULLIF(
+    SUBSTR(first_name,1,1)||UPPER(last_name),
+    email
+  ),
+  'Email does not match pattern',
+  'Match found'
+) FROM employees WHERE length(first_name)=4;
 
+--COALESCE(p1,p2,p3,...)返回第一个不为空的参数
+SELECT COALESCE(NULL,NULL,NULL,'a string') FROM dual;
+SELECT COALESCE(NULL,NULL,NULL)FROM dual;
+SELECT COALESCE(SUBSTR('abc',4),'is null','not null')FROM dual;
+--DECODE(exp1,comp1,iftrue1,comp2,true2,comp...,true...,false...)返回匹配的comp对应的true,否则返回空
+SELECT DECODE(1234,123,'123 is match')FROM dual;
+SELECT DECODE(1234,123,'123 is match', 'not match') FROM dual;
+--true3,发现匹配后不再搜索 
+SELECT DECODE('search','comp1','true1','comp2','true2','search','true3',SUBSTR('2search',2,6),'true4','false') FROM dual;
+
+--CASE
+SELECT
+CASE SUBSTR(1234,1,3)
+  WHEN '134' THEN '134 is a match'
+  WHEN '135' THEN '135 is a match'
+  WHEN CONCAT('1','23') THEN CONCAT('1','23')||'is a match'
+  ELSE 'no match'
+END
+FROM dual;
+
+--查询department_id=100的员工工作月数和年数对应的忠诚度
+SELECT last_name,hire_date,SYSDATE,TRUNC(months_between(SYSDATE,hire_date))MONTH，TRUNC(months_between(SYSDATE,hire_date)/12) years,
+  CASE TRUNC(months_between(SYSDATE,hire_date)/12)
+    WHEN 6 THEN 'Intern'
+    WHEN 7 THEN 'Junior'
+    WHEN 8 THEN 'Intermediate' 
+    WHEN 9 THEN 'Senior'
+    ELSE 'Furniture'
+  END loyalty
+FROM employees WHERE department_id=100 ORDER BY years;
+
+SELECT * FROM locations;
+--下面这两个查询结果一样
+SELECT DECODE(state_province,'Washington','Headquarters','Texas','Oil Wells','California',city,'New Jersey',street_address) location_info 
+FROM locations WHERE country_id='US' ORDER BY location_info;
+
+SELECT CASE state_province
+  WHEN 'Washington' THEN 'Headquarters'
+  WHEN 'Texas' THEN 'Oil Wells'
+  WHEN 'California'THEN city
+  WHEN 'New Jersey'THEN street_address
+  END location_info 
+FROM locations WHERE country_id='US' ORDER BY location_info;
 
 
 
