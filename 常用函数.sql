@@ -44,7 +44,7 @@ SELECT REPLACE('1#3#5#7#9#','#','->') FROM dual;
 --第三个参数为空，则默认用空字符提黄#，亦即将#删除
 SELECT REPLACE('1#3#5#7#9#','#') FROM dual;
 
---4舍5入
+--4舍5入最近的整数
 SELECT ROUND(1601.916,1) FROM dual; 
 SELECT ROUND(1601.916,2) FROM dual; 
 SELECT ROUND(1601.916,-3) FROM dual; 
@@ -205,7 +205,65 @@ FROM locations WHERE country_id='US' ORDER BY location_info;
 
 
 
+--分组函数
+--107
+SELECT COUNT(*) FROM employees;
+SELECT COUNT(commission_pct),COUNT(1) FROM employees;
+SELECT COUNT(DISTINCT salary) FROM employees;
+SELECT COUNT(hire_date),COUNT(manager_id) FROM employees;
 
+SELECT SUM(2) FROM employees;
+SELECT SUM(salary) FROM employees;
+SELECT SUM(DISTINCT salary) FROM employees;
+SELECT SUM(commission_pct) FROM employees;
+
+SELECT AVG(2) FROM employees;
+SELECT AVG(salary) FROM employees;
+SELECT AVG(DISTINCT salary) FROM employees;
+SELECT AVG(commission_pct) FROM employees;
+
+--计算样本方差
+--STDDEV(expr)计算样本标准差：方差的平方根
+--VARIANCE(expr)计算方差：样本值与所有样本平均值差的平方和除以N-1
+SELECT salary FROM employees WHERE department_id=90;
+SELECT AVG(salary),VARIANCE(salary),STDDEV(salary) FROM employees WHERE department_id=90;
+SELECT AVG(salary),SUM(POWER((salary-19333.33),2))/2 variance,
+  SQRT(SUM(POWER((salary-19333.33),2))/2) deviation FROM employees WHERE department_id=90;
+SELECT AVG(salary),
+  SUM(POWER((salary-(SELECT AVG(salary) FROM employees WHERE department_id=90)),2)/2) variance,
+  SQRT(SUM(POWER((salary-(SELECT AVG(salary) FROM employees WHERE department_id=90)),2)/2)) deviation
+FROM employees WHERE department_id=90;
+
+--最值
+SELECT MIN(commission_pct), MAX(commission_pct) FROM employees;
+SELECT MIN(start_date), MAX(end_date) FROM job_history;
+SELECT MIN(job_id), MAX(job_id) FROM employees;
+SELECT MIN(salary), MAX(salary) FROM employees;
+
+--LISTAGG将返回列值得字符串汇总
+--LISTAGG(expr,['delimiter']) WITHIN GROUP(ORDER_BY_CLAUSE)
+SELECT * FROM countries ORDER BY region_id,country_name DESC;
+SELECT LISTAGG(country_name,',') WITHIN GROUP(ORDER BY region_id,country_name DESC) FROM countries;
+
+SELECT ROUND(AVG(LENGTH(country_name))) average_country_name_length FROM countries;
+
+--GROUP BY  单行函数可以嵌套任意多层，分组函数最多只能嵌套两层
+SELECT end_date FROM job_history GROUP BY(end_date);
+SELECT department_id,job_id,SUM(commission_pct)FROM employees WHERE commission_pct IS NOT NULL GROUP BY department_id,job_id;
+
+SELECT to_char(end_date,'yyyy') "Year", job_id, COUNT(*) "Number of Employees" FROM job_history
+GROUP BY to_char(end_date,'yyyy'), job_id ORDER BY COUNT(*) DESC;
+
+--having限制物理行时使用where，限制组级行时使用having
+SELECT department_id,COUNT(*) FROM job_history 
+WHERE department_id IN(50,60,80,110)
+GROUP BY department_id
+HAVING COUNT(*) > 1;
+
+SELECT to_char(hire_date,'Day') hire_date,COUNT(*) FROM employees GROUP BY to_char(hire_date,'Day') HAVING COUNT(*)>=2 ORDER BY hire_date;
+
+--1
+SELECT COUNT(*) FROM dual;
 
 
 
