@@ -19,6 +19,9 @@ ALTER USER hr ACCOUNT UNLOCK;
 --锁定用户
 ALTER USER hr ACCOUNT LOCK;
 
+--账户解锁和修改密码
+alter user system identified by manager account unlock;
+
 --删除用户
 DROP USER ocpdbadmin cascade;
 
